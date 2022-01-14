@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Qiita API</title>
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div class="search_area">
+    <div id="logo"><img src="./images/logo.png" class="logo_image"></div>
+    <input type="text" id="search_text">
+    <button id="search_button">検索</button>
+    <div id="loading" style="display: none;"><img src="./images/circle.gif" class="loading_icon"></div>
+  </div>
+  <div class="result_containder">
+    <div class="container mx-auto">
+      <div class="border_wrapper">
+        <div id="result" class="grid grid-cols-5 text-2xl"></div>
+      </div>
+    </div>
+  </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  // 1 検索ボタンのクリックで検索
+  $("#search_button").on("click", function() {
+    $('#loading').css('display', 'block');
+    // 検索ボックスの文字を取得する
+    let searchText = $("#search_text").val();
+    // みなさんのtoken
+    let token = "[token key]"
+    // searchTextに入ってきた文字列を使ってaxiosのURLを組み立てる
+    // その上で、axios.getを使ってAPIにアクセスする
+    axios.get(`https://qiita.com/api/v2/items?page=1&per_page=20&query=${searchText}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
+    .then(function(response) {
+      // response.dataでいい感じにサマリにしてくれた配列を返してもらえるようになる
+      // console.log(response.data);
+      $('#loading').css('display', 'none');
+      let data = response.data;
+      if (data.length > 0){
+      let str = "";
+      for(let i = 0; i < data.length; i++) {
+        str += 
+        `<div class="p-5">
+        <a href="${data[i].url}">${data[i].title}</a>
+        </div>`
+        // <a href="https://qiita.com/items/hoge">なんかのタイトル</a><br>
+        // <a href="https://qiita.com/items/hoge">なんかのタイトル</a><br> ...
+      }
+
+      $("#result").html(str);
+      } else {
+        $("#result").html('一致する記事はありませんでした');
+      }
+    })
+  });
+  
+  // 2 エンターキーでも検索できるように
+  $("#search_text").on("keydown", function(e) {
+    if (e.keyCode == 13){
+      $('#loading').css('display', 'block');
+    // 検索ボックスの文字を取得する
+    let searchText = $("#search_text").val();
+    // みなさんのtoken
+    let token = "16f497b6bbb579315cc92a088a2f82deef014760"
+    // searchTextに入ってきた文字列を使ってaxiosのURLを組み立てる
+    // その上で、axios.getを使ってAPIにアクセスする
+    axios.get(`https://qiita.com/api/v2/items?page=1&per_page=20&query=${searchText}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
+    .then(function(response) {
+      // response.dataでいい感じにサマリにしてくれた配列を返してもらえるようになる
+      // console.log(response.data);
+      $('#loading').css('display', 'none');
+      let data = response.data;
+      if (data.length > 0){
+      let str = "";
+      for(let i = 0; i < data.length; i++) {
+        str += 
+        `<div class="p-5">
+        <a href="${data[i].url}">${data[i].title}</a>
+        </div>`
+        // <a href="https://qiita.com/items/hoge">なんかのタイトル</a><br>
+        // <a href="https://qiita.com/items/hoge">なんかのタイトル</a><br> ...
+      }
+
+      $("#result").html(str);
+      } else {
+        $("#result").html('一致する記事はありませんでした');
+      }
+    })
+    }
+  });
+</script>
+</body>
+</html>
